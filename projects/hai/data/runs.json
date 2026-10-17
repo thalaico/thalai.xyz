@@ -1,0 +1,13 @@
+{
+  "updated": "2026-10-17",
+  "current_stage": "Baseline",
+  "model": "DeepSeek V4.1 Flash (OpenCode API)",
+  "harness": "fx",
+  "configs": [
+    { "id": "baseline", "label": "Baseline" },
+    { "id": "memory", "label": "+ Memory" },
+    { "id": "exec-memory", "label": "+ Executable memory" },
+    { "id": "strategy", "label": "+ Self-improving strategy" }
+  ],
+  "checkpoints": []
+}

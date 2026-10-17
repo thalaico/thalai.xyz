@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HAI progress – thalai</title>
+  <meta name="description" content="HAI's timeline: milestones, decisions and results, and whether it's getting better.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M3 27 C 12 26, 16 20, 19 13 S 26 5, 29 4' fill='none' stroke='%231f43b0' stroke-width='4' stroke-linecap='round'/></svg>">
+  <script src="/assets/theme.js"></script>
+</head>
+<body>
+  <header class="wrap wide site-head">
+    <a class="wordmark" href="/">thalai</a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="/about/">About</a>
+      <a href="/projects/">Projects</a>
+    </nav>
+  </header>
+
+  <main class="wrap wide">
+    <div class="page-head">
+      <p class="crumbs"><a href="/projects/">Projects</a> / <a href="/projects/hai/">HAI</a> / Progress</p>
+      <h1>Is it getting better?</h1>
+      <p class="sub">Scroll through HAI's history: every milestone, decision and result, oldest first. The score on the right follows you as you go.</p>
+      <p class="jump"><a href="#latest">Jump to the latest entry</a></p>
+    </div>
+
+    <div class="tl-layout">
+      <ol class="timeline" id="timeline" aria-label="HAI timeline"></ol>
+
+      <aside class="scoreboard" id="scoreboard" aria-live="polite">
+        <p class="sb-when" data-k="when">–</p>
+        <p class="sb-stage" data-k="stage">–</p>
+        <div class="sb-score">
+          <span class="sb-num" data-k="score">–</span>
+          <span class="sb-label">held-out pass rate</span>
+        </div>
+        <p class="sb-delta" data-k="delta"></p>
+        <div class="sb-chart" data-k="chart"></div>
+        <dl class="sb-facts">
+          <div><dt>Tasks run</dt><dd data-k="tasks">0</dd></div>
+          <div><dt>Model</dt><dd data-k="model">–</dd></div>
+        </dl>
+      </aside>
+    </div>
+
+    <h2 id="charts">All results</h2>
+    <p>The full picture, one line per configuration. The x-axis is how many tasks the agent has worked through.</p>
+
+    <section class="chart" data-metric="heldout_pass_rate" data-format="pct">
+      <h3 class="chart-title">Held-out pass rate</h3>
+      <p class="chart-desc">Share of unseen tasks solved, with memory frozen at that point. Higher is better.</p>
+    </section>
+
+    <section class="chart" data-metric="regression_rate" data-format="pct">
+      <h3 class="chart-title">Regression rate</h3>
+      <p class="chart-desc">Tasks that used to pass and now fail. Lower is better; this is the main check on self-improvement.</p>
+    </section>
+
+    <section class="chart" data-metric="steps_per_solved" data-format="num">
+      <h3 class="chart-title">Steps per solved task</h3>
+      <p class="chart-desc">Average agent steps on tasks it solved. Lower means it's getting more efficient.</p>
+    </section>
+
+    <section class="chart" data-metric="memory_items" data-format="int">
+      <h3 class="chart-title">Memory items stored</h3>
+      <p class="chart-desc">Size of the memory store. Should level off as weak items are retired, not grow forever.</p>
+    </section>
+  </main>
+
+  <footer class="wrap wide site-foot">
+    <span>Data: <a href="/projects/hai/data/timeline.json">timeline.json</a>, <a href="/projects/hai/data/runs.json">runs.json</a></span>
+    <button class="theme-toggle" type="button">Dark mode</button>
+  </footer>
+
+  <script src="/assets/progress.js"></script>
+</body>
+</html>

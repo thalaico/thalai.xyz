@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HAI – thalai</title>
+  <meta name="description" content="HAI: a coding agent that learns from its own verified work, measured over time.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M3 27 C 12 26, 16 20, 19 13 S 26 5, 29 4' fill='none' stroke='%231f43b0' stroke-width='4' stroke-linecap='round'/></svg>">
+  <script src="/assets/theme.js"></script>
+</head>
+<body>
+  <header class="wrap site-head">
+    <a class="wordmark" href="/">thalai</a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="/about/">About</a>
+      <a href="/projects/">Projects</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="page-head">
+      <p class="crumbs"><a href="/projects/">Projects</a> / HAI</p>
+      <h1>HAI</h1>
+      <p class="sub">A hybrid coding agent that learns from its own verified work, and a public record of whether it actually gets better.</p>
+    </div>
+
+    <p><a class="go" href="/projects/hai/progress/">See progress and runs</a></p>
+
+    <h2>The question</h2>
+    <p>Training intelligence is expensive. Using it doesn't have to be. Can a cheap, capable model get measurably better at coding over time without retraining, just by remembering what worked, checking that memory against reality, and improving the way it approaches problems?</p>
+    <p>Most agent memory today is notes: prose that may or may not still be true. HAI tests a different idea. Its memory is mostly code: tests, probes and checks it can run before trusting them. Anything that fails gets retired.</p>
+
+    <h2>How it's built</h2>
+    <p>Four layers. Only the harness stays fixed; everything above it is allowed to change, but only through a gate.</p>
+    <div class="table-scroll">
+      <table class="stack">
+        <thead>
+          <tr><th scope="col">Layer</th><th scope="col">What it is</th><th scope="col">How it changes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Harness</td>
+            <td><a href="https://github.com/vercel-labs/fx">fx</a>, Vercel Labs' small, embeddable coding agent</td>
+            <td>Doesn't. Kept fixed so results are comparable.</td>
+          </tr>
+          <tr>
+            <td>Model</td>
+            <td>DeepSeek V4.1 Flash through the OpenCode API; a small local model later for weight updates</td>
+            <td>Swapped only between experiments, never mid-run.</td>
+          </tr>
+          <tr>
+            <td>Memory</td>
+            <td>Lessons from past runs plus runnable checks about each codebase, in SQLite behind an MCP server</td>
+            <td>After each task, but only from runs the tests judged. Items that start failing are retired.</td>
+          </tr>
+          <tr>
+            <td>Strategy</td>
+            <td>Prompts, skills and small tools, versioned in git</td>
+            <td>An evolution agent proposes changes; they're kept only if they score better on a validation set with no regressions.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>The plan</h2>
+    <p>Each stage is measured against the one before it. If a stage doesn't help, that's a result, and it's recorded.</p>
+    <ol class="stages">
+      <li data-state="current"><strong>Baseline.</strong> fx and the model with no memory. Establishes the starting score and how noisy runs are.<br><span class="stage-note">In progress</span></li>
+      <li><strong>Memory.</strong> Add lessons learned from past runs. Compare against baseline on held-out tasks.</li>
+      <li><strong>Executable memory.</strong> Add tests and probes the agent can run before trusting them. Does runnable memory beat prose?</li>
+      <li><strong>Self-improving strategy.</strong> Let the agent propose changes to its own prompts and tools, keeping only those that win without breaking anything.</li>
+      <li><strong>Weight updates.</strong> Fine-tune a small local model on its own verified wins, and compare against memory alone.</li>
+    </ol>
+
+    <h2>How progress is measured</h2>
+    <p>Tasks run as an ordered stream, so the agent can learn as it goes. Every 25 tasks, it's scored on a separate held-out set with memory frozen. Improvement there is learning; improvement only on tasks it has already seen could just be memorising.</p>
+    <ul>
+      <li><strong>Held-out pass rate</strong>: share of unseen tasks solved.</li>
+      <li><strong>Regression rate</strong>: tasks that used to pass and now fail. The main check on self-improvement.</li>
+      <li><strong>Steps per solved task</strong>: whether it gets more efficient, not just more accurate.</li>
+      <li><strong>Memory size against use</strong>: to catch the store bloating with things it never needs.</li>
+    </ul>
+    <p>Tasks come from public benchmarks (a Terminal-Bench and SWE-bench Pro subset) and from real repositories turned into tasks with tests.</p>
+
+    <div class="callout">
+      <p><strong>Stopping rule, set in advance:</strong> if memory doesn't add at least 3–5 points on held-out tasks after about 200 tasks, the main idea is weak, and the layers above it won't rescue it.</p>
+    </div>
+
+    <h2>Built on</h2>
+    <ul>
+      <li><a href="https://github.com/vercel-labs/fx">fx</a> for the harness</li>
+      <li><a href="https://research.google/blog/reasoningbank-enabling-agents-to-learn-from-experience/">ReasoningBank</a> for the shape of memory items</li>
+      <li><a href="https://arxiv.org/abs/2504.15228">A Self-Improving Coding Agent</a> (SICA) for the strategy loop</li>
+      <li><a href="https://arxiv.org/abs/2605.18747">Code as Agent Harness</a>, a survey that frames the whole approach</li>
+    </ul>
+
+    <p style="margin-top:2.5rem"><a class="go" href="/projects/hai/progress/">See progress and runs</a></p>
+  </main>
+
+  <footer class="wrap site-foot">
+    <span>thalai.xyz</span>
+    <button class="theme-toggle" type="button">Dark mode</button>
+  </footer>
+</body>
+</html>

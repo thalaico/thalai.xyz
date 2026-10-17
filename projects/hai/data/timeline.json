@@ -1,0 +1,94 @@
+{
+  "stages": [
+    {
+      "id": "setup",
+      "label": "Setup"
+    },
+    {
+      "id": "baseline",
+      "label": "Stage 1: Baseline"
+    },
+    {
+      "id": "memory",
+      "label": "Stage 2: Memory"
+    },
+    {
+      "id": "exec-memory",
+      "label": "Stage 3: Executable memory"
+    },
+    {
+      "id": "strategy",
+      "label": "Stage 4: Self-improving strategy"
+    },
+    {
+      "id": "weights",
+      "label": "Stage 5: Weight updates"
+    }
+  ],
+  "entries": [
+    {
+      "date": "2026-10-17",
+      "stage": "setup",
+      "kind": "milestone",
+      "title": "HAI started",
+      "note": "Can a cheap model get measurably better at coding over time, without retraining, by remembering what worked and checking that memory against reality?",
+      "details": [
+        "Coding first, because tests give a clear pass or fail. Without a reliable signal like that, an agent can't tell which of its lessons were right."
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "stage": "setup",
+      "kind": "decision",
+      "title": "Harness: fx, kept fixed",
+      "note": "fx is small, scriptable and embeddable, which makes it easy to run thousands of tasks. The harness itself won't be self-edited.",
+      "details": [
+        "fx is written in Zig, so a self-edit would mean a compile step that can fail. Self-improvement happens in a layer of prompts, skills and tools on top, versioned in git and easy to roll back."
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "stage": "setup",
+      "kind": "decision",
+      "title": "Model: DeepSeek V4.1 Flash through the OpenCode API",
+      "note": "Strong on coding benchmarks and very cheap to run, which matters when every experiment means hundreds of tasks.",
+      "details": [
+        "Its weights are open, but at 552B total parameters it isn't practical to fine-tune at home. Weight updates move to a separate stage with a small local model."
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "stage": "setup",
+      "kind": "direction",
+      "title": "Memory should be code, not just notes",
+      "note": "A memory stored as a test or probe can be run before it's trusted, and retired when it starts failing. Added as its own stage to compare against prose memory.",
+      "details": [
+        "Prose memories go stale silently. Runnable ones tell you when they've stopped being true."
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "stage": "setup",
+      "kind": "decision",
+      "title": "How progress will be measured",
+      "note": "Ordered task stream; every 25 tasks, a score on held-out tasks with memory frozen. Tracked: pass rate, regressions, steps per solved task, memory size.",
+      "details": [
+        "Stopping rule, set in advance: if memory doesn't add at least 3–5 points on held-out tasks after about 200 tasks, the core idea is weak."
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "stage": "setup",
+      "kind": "learning",
+      "title": "Expect small gains from memory alone",
+      "note": "Google's ReasoningBank added 4.6 points on SWE-Bench Verified. SICA's self-edits went from 17% to 53%, but with frontier models doing the reflecting.",
+      "details": [
+        "If HAI matches the first, memory is worth keeping. The bigger question is whether executable memory and strategy edits add more on top."
+      ]
+    }
+  ],
+  "next": {
+    "title": "Run the baseline",
+    "note": "fx and DeepSeek V4.1 Flash with no memory, on the first 100 tasks, three times each. This sets the starting score and shows how noisy runs are."
+  }
+}
