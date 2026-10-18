@@ -179,7 +179,7 @@ li { margin-bottom: 0.35rem; }
 /* ---- project list ---- */
 .project-list { list-style: none; padding: 0; margin: 1.5rem 0 0; border-top: 1px solid var(--rule); }
 .project-list li { margin: 0; border-bottom: 1px solid var(--rule); }
-.project-list a {
+.project-list a, .project-list .p-item {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 0.25rem 1.5rem;
@@ -466,6 +466,6 @@ details.data-table th, details.data-table td { text-align: left; padding: 0.3rem
 
 @media (max-width: 560px) {
   body { font-size: 1.0625rem; }
-  .project-list a { grid-template-columns: 1fr; }
+  .project-list a, .project-list .p-item { grid-template-columns: 1fr; }
   .p-state { align-self: start; }
 }

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>kathai – thalai</title>
+  <meta name="description" content="kathai: a minimalist EPUB reader that reads books aloud, in the browser.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M3 27 C 12 26, 16 20, 19 13 S 26 5, 29 4' fill='none' stroke='%231f43b0' stroke-width='4' stroke-linecap='round'/></svg>">
+  <script src="/assets/theme.js"></script>
+</head>
+<body>
+  <header class="wrap site-head">
+    <a class="wordmark" href="/">thalai</a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="/about/">About</a>
+      <a href="/projects/">Projects</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="page-head">
+      <p class="crumbs"><a href="/projects/">Projects</a> / kathai</p>
+      <h1>kathai</h1>
+      <p class="sub">A minimalist EPUB reader that reads books aloud.</p>
+    </div>
+
+    <p>Kathai runs entirely in the browser: no accounts, no servers, no tracking. Books you upload stay on your device. It turns books you already own into audiobooks, without a subscription or anyone watching what you read.</p>
+    <p>You can narrate chapters with your system's built-in voice, with speed control, auto-advance and sentence highlighting. It saves your place, can import free books from Project Gutenberg, and works offline as an installable app after the first visit.</p>
+    <p>It's built with Svelte 5, TypeScript, epub.js and IndexedDB, and it doubles as a way to learn a range of web technologies. Still to do: a better on-device neural voice, a settings panel and an accessibility pass.</p>
+    <p><a class="go" href="https://github.com/thalaico/kathai">Source on GitHub</a></p>
+  </main>
+
+  <footer class="wrap site-foot">
+    <span>thalai.xyz</span>
+    <button class="theme-toggle" type="button">Dark mode</button>
+  </footer>
+</body>
+</html>
