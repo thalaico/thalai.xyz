@@ -6,23 +6,27 @@
     },
     {
       "id": "baseline",
-      "label": "Stage 1: Baseline"
+      "label": "Stage 1: Baselines"
+    },
+    {
+      "id": "diagnosis",
+      "label": "Stage 2: Triage and oracle test"
     },
     {
       "id": "memory",
-      "label": "Stage 2: Memory"
+      "label": "Stage 3: Notes, memory and search"
     },
     {
       "id": "exec-memory",
-      "label": "Stage 3: Executable memory"
+      "label": "Stage 4: Executable memory"
     },
     {
       "id": "strategy",
-      "label": "Stage 4: Self-improving strategy"
+      "label": "Stage 5: Self-improving strategy"
     },
     {
       "id": "weights",
-      "label": "Stage 5: Weight updates"
+      "label": "Stage 6: Weight updates"
     }
   ],
   "entries": [
@@ -85,10 +89,61 @@
       "details": [
         "If HAI matches the first, memory is worth keeping. The bigger question is whether executable memory and strategy edits add more on top."
       ]
+    },
+    {
+      "date": "2026-10-18",
+      "stage": "setup",
+      "kind": "direction",
+      "title": "The goal is cost, not just accuracy",
+      "note": "The aim: near-frontier results on a codebase at a fraction of the frontier's cost. The main number is now cost per solved task, shown next to accuracy.",
+      "details": [
+        "A harness that adds 5 points but triples the tokens per task could lose on cost. So every run records the full cost, including retrieval, search, verification and retries.",
+        "DeepSeek's own numbers put bare Flash already close to the frontier at low cost. If that holds here, HAI's contribution is only the remaining gap, so a frontier model is measured on the same tasks as a reference."
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "stage": "setup",
+      "kind": "direction",
+      "title": "Focus on one codebase at a time",
+      "note": "Memory should work like a veteran on a codebase: the longer it works there, the better it knows where things live and what breaks. So tasks now run as a stream per repository.",
+      "details": [
+        "The test is whether pass rate on later tasks in the same repo rises as the stream goes on. Public repos prove the method; a private or very recent one is the cleaner proof, because the model can't have memorised it."
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "stage": "setup",
+      "kind": "decision",
+      "title": "Memory has to beat a plain notes file",
+      "note": "A hand-written notes file is the cheap, obvious alternative. A static-notes arm is added, so HAI memory must beat it, not just beat having nothing.",
+      "details": [
+        "Each memory item will record the files it was learned from and be re-checked when they change, so stale lessons are dropped instead of trusted."
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "stage": "setup",
+      "kind": "decision",
+      "title": "Test the idea cheaply before building it",
+      "note": "Two checks come first: sort the baseline's failures into missing knowledge versus weak reasoning, then give the model the right hints on those tasks and see how many it fixes.",
+      "details": [
+        "Search and memory add knowledge, not reasoning. If most failures are reasoning failures, or perfect hints barely help, the approach has a low ceiling and we learn that before building any memory."
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "stage": "setup",
+      "kind": "learning",
+      "title": "Local runs work; terms need a check",
+      "note": "fx runs against the model through a small local proxy, and a first 10-task trial is under way. OpenCode's terms are unclear on benchmark-scale automation, so we're asking them before any large run.",
+      "details": [
+        "The terms also restrict using output to train competing models, which could affect the weight-update stage. Training data will come from sources that allow it."
+      ]
     }
   ],
   "next": {
-    "title": "Run the baseline",
-    "note": "fx and DeepSeek V4.1 Flash with no memory, on the first 100 tasks, three times each. This sets the starting score and shows how noisy runs are."
+    "title": "Run the two baselines",
+    "note": "Bare Flash and one frontier model on the same tasks, with cost per solved task recorded, three runs each for noise. Then triage the failures and run the oracle test."
   }
 }

@@ -18,6 +18,9 @@
   --series-2: #eb6834;
   --series-3: #1baf7a;
   --series-4: #eda100;
+  --series-5: #7b5cd6;
+  --series-6: #5b6b7a;
+  --series-7: #c2398a;
   --grid: #e1e6ec;
 
   --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
@@ -43,6 +46,9 @@
     --series-2: #d95926;
     --series-3: #199e70;
     --series-4: #c98500;
+  --series-5: #9378e6;
+  --series-6: #8a99a8;
+  --series-7: #d9569f;
     --grid: #232a33;
   }
 }
@@ -61,6 +67,9 @@
   --series-2: #d95926;
   --series-3: #199e70;
   --series-4: #c98500;
+  --series-5: #9378e6;
+  --series-6: #8a99a8;
+  --series-7: #d9569f;
   --grid: #232a33;
 }
 

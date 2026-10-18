@@ -44,11 +44,12 @@ The progress page is generated in the browser from two files. Edit them and push
   "heldout_pass_rate": 0.32,
   "regression_rate": 0.0,
   "steps_per_solved": 17.4,
-  "memory_items": 0
+  "memory_items": 0,
+  "cost_per_solved": 0.04
 }
 ```
 
-Rates are fractions (0.32 = 32%). `config` must match an id in `configs`.
+Rates are fractions (0.32 = 32%); `cost_per_solved` is in US dollars. `config` must match an id in `configs`.
 
 The HAI runner can write these files and commit them automatically after each evaluation. Keep any API keys (for example the OpenCode key used for DeepSeek) in the runner's environment or GitHub Actions secrets, never in this repo.
 

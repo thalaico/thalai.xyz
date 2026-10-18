@@ -25,14 +25,15 @@
     <div class="page-head">
       <p class="crumbs"><a href="/projects/">Projects</a> / HAI</p>
       <h1>HAI</h1>
-      <p class="sub">A hybrid coding agent that learns from its own verified work, and a public record of whether it actually gets better.</p>
+      <p class="sub">A cheap coding agent that learns from its own verified work, aiming for near-frontier results on a codebase at a fraction of the cost. Plus a public record of whether it works.</p>
     </div>
 
     <p><a class="go" href="/projects/hai/progress/">See progress and runs</a></p>
 
     <h2>The question</h2>
-    <p>Training intelligence is expensive. Using it doesn't have to be. Can a cheap, capable model get measurably better at coding over time without retraining, just by remembering what worked, checking that memory against reality, and improving the way it approaches problems?</p>
-    <p>Most agent memory today is notes: prose that may or may not still be true. HAI tests a different idea. Its memory is mostly code: tests, probes and checks it can run before trusting them. Anything that fails gets retired.</p>
+    <p>Training intelligence is expensive. Using it doesn't have to be. Can a cheap, capable model get close to a frontier model on a specific codebase, at a fraction of the cost, by remembering what worked, looking things up and checking them against reality, and improving how it approaches problems?</p>
+    <p>The idea is a veteran effect. Someone who has worked in a codebase for a year knows where things live, which conventions are real and what broke last time. A general model arrives knowing none of that. HAI tries to give a small model that experience, and to keep it honest: its memory is mostly code (tests, probes and checks it can run before trusting them), and anything that fails is retired.</p>
+    <p>The claim being tested is <strong>cost per solved task at near-frontier accuracy</strong>. It isn't a claim to beat the best models in general. Search and memory add knowledge, not reasoning, so the first thing to find out is how many failures are really missing knowledge.</p>
 
     <h2>How it's built</h2>
     <p>Four layers. Only the harness stays fixed; everything above it is allowed to change, but only through a gate.</p>
@@ -69,25 +70,27 @@
     <h2>The plan</h2>
     <p>Each stage is measured against the one before it. If a stage doesn't help, that's a result, and it's recorded.</p>
     <ol class="stages">
-      <li data-state="current"><strong>Baseline.</strong> fx and the model with no memory. Establishes the starting score and how noisy runs are.<br><span class="stage-note">In progress</span></li>
-      <li><strong>Memory.</strong> Add lessons learned from past runs. Compare against baseline on held-out tasks.</li>
-      <li><strong>Executable memory.</strong> Add tests and probes the agent can run before trusting them. Does runnable memory beat prose?</li>
+      <li data-state="current"><strong>Baselines.</strong> fx with bare DeepSeek V4.1 Flash, and one frontier model as a reference, on the same tasks. Sets the starting score, the cost per solved task, and how noisy runs are.<br><span class="stage-note">In progress</span></li>
+      <li><strong>Triage and oracle test.</strong> Sort the baseline's failures into missing knowledge versus weak reasoning, then give the model the right hints on those tasks. This sets the ceiling for everything after it, and can end the idea early.</li>
+      <li><strong>Notes, memory and search.</strong> Compare a plain notes file, HAI memory, and search with verification, each against bare Flash. HAI memory has to beat the notes file, not just nothing.</li>
+      <li><strong>Executable memory.</strong> Add tests and probes the agent can run before trusting a lesson. Does runnable memory beat prose?</li>
       <li><strong>Self-improving strategy.</strong> Let the agent propose changes to its own prompts and tools, keeping only those that win without breaking anything.</li>
       <li><strong>Weight updates.</strong> Fine-tune a small local model on its own verified wins, and compare against memory alone.</li>
     </ol>
 
     <h2>How progress is measured</h2>
-    <p>Tasks run as an ordered stream, so the agent can learn as it goes. Every 25 tasks, it's scored on a separate held-out set with memory frozen. Improvement there is learning; improvement only on tasks it has already seen could just be memorising.</p>
+    <p>Tasks run as an ordered stream per codebase, so the agent can learn as it goes. Every 25 tasks, it's scored on a separate held-out set with memory frozen. Improvement there is learning; improvement only on tasks it has already seen could just be memorising.</p>
     <ul>
+      <li><strong>Cost per solved task</strong>: the full spend, including retrieval, search, verification and retries, divided by tasks solved. The headline number, shown against accuracy.</li>
       <li><strong>Held-out pass rate</strong>: share of unseen tasks solved.</li>
       <li><strong>Regression rate</strong>: tasks that used to pass and now fail. The main check on self-improvement.</li>
       <li><strong>Steps per solved task</strong>: whether it gets more efficient, not just more accurate.</li>
       <li><strong>Memory size against use</strong>: to catch the store bloating with things it never needs.</li>
     </ul>
-    <p>Tasks come from public benchmarks (a Terminal-Bench and SWE-bench Pro subset) and from real repositories turned into tasks with tests.</p>
+    <p>Tasks come from public benchmarks (a Terminal-Bench and SWE-bench Pro subset) and from real repositories turned into tasks with tests. Public repos prove the method; a private or very recent repository is the cleaner proof, because the model can't have seen it in training.</p>
 
     <div class="callout">
-      <p><strong>Stopping rule, set in advance:</strong> if memory doesn't add at least 3–5 points on held-out tasks after about 200 tasks, the main idea is weak, and the layers above it won't rescue it.</p>
+      <p><strong>Stopping rule, set in advance:</strong> if memory doesn't add at least 3–5 points on held-out tasks after about 200 tasks, or doesn't beat the plain notes file, the main idea is weak, and the layers above it won't rescue it.</p>
     </div>
 
     <h2>Built on</h2>

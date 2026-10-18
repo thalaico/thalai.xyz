@@ -1,13 +1,37 @@
 {
-  "updated": "2026-10-17",
+  "updated": "2026-10-18",
   "current_stage": "Baseline",
   "model": "DeepSeek V4.1 Flash (OpenCode API)",
   "harness": "fx",
   "configs": [
-    { "id": "baseline", "label": "Baseline" },
-    { "id": "memory", "label": "+ Memory" },
-    { "id": "exec-memory", "label": "+ Executable memory" },
-    { "id": "strategy", "label": "+ Self-improving strategy" }
+    {
+      "id": "baseline",
+      "label": "Bare Flash"
+    },
+    {
+      "id": "frontier",
+      "label": "Frontier model (reference)"
+    },
+    {
+      "id": "notes",
+      "label": "+ Static notes file"
+    },
+    {
+      "id": "memory",
+      "label": "+ HAI memory"
+    },
+    {
+      "id": "exec-memory",
+      "label": "+ Executable memory"
+    },
+    {
+      "id": "search",
+      "label": "+ Search with verification"
+    },
+    {
+      "id": "strategy",
+      "label": "+ Self-improving strategy"
+    }
   ],
   "checkpoints": []
 }

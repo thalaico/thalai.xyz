@@ -32,12 +32,13 @@
     if (v == null || isNaN(v)) return "–";
     if (kind === "pct") return Math.round(v * 1000) / 10 + "%";
     if (kind === "int") return Math.round(v).toLocaleString("en-GB");
+    if (kind === "usd") return "$" + (v > 0 && v < 0.1 ? v.toFixed(3) : v.toFixed(2));
     return (Math.round(v * 10) / 10).toLocaleString("en-GB");
   }
   function cssVar(name) {
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   }
-  function seriesColor(i) { return "var(--series-" + ((i % 4) + 1) + ")"; }
+  function seriesColor(i) { return "var(--series-" + ((i % 7) + 1) + ")"; }
 
   Promise.all([
     fetch(DATA + "timeline.json").then(function (r) { return r.json(); }),
@@ -288,7 +289,7 @@
       var v = sc.step * i, yy = Y(v);
       if (i > 0) s.appendChild(svg("line", { "class": "gridline", x1: M.l, x2: M.l + iw, y1: yy, y2: yy }));
       var tl = svg("text", { x: M.l - 8, y: yy + 4, "text-anchor": "end" });
-      tl.textContent = fmt(v, format === "pct" ? "pct" : (format === "int" ? "int" : "num"));
+      tl.textContent = fmt(v, format === "pct" ? "pct" : (format === "int" ? "int" : (format === "usd" ? "usd" : "num")));
       s.appendChild(tl);
     }
     s.appendChild(svg("line", { "class": "baseline", x1: M.l, x2: M.l + iw, y1: Y(0), y2: Y(0) }));

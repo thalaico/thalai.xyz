@@ -51,6 +51,11 @@
     <h2 id="charts">All results</h2>
     <p>The full picture, one line per configuration. The x-axis is how many tasks the agent has worked through.</p>
 
+    <section class="chart" data-metric="cost_per_solved" data-format="usd">
+      <h3 class="chart-title">Cost per solved task</h3>
+      <p class="chart-desc">Total spend divided by tasks solved, including memory, search, verification and retries. Lower is better; the frontier line is the reference to get near.</p>
+    </section>
+
     <section class="chart" data-metric="heldout_pass_rate" data-format="pct">
       <h3 class="chart-title">Held-out pass rate</h3>
       <p class="chart-desc">Share of unseen tasks solved, with memory frozen at that point. Higher is better.</p>
