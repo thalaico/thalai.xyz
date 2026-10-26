@@ -9,6 +9,7 @@ Personal site for projects and experiments. Plain static HTML, CSS and JS, serve
 /projects/hai/            HAI: what it is, how it's built, the plan
 /projects/hai/progress/   HAI timeline, live scoreboard and result charts
 /projects/hai/data/       timeline.json and runs.json (the progress page reads these)
+/projects/bloum/          bloum: what it is; links to the live site (repo is private)
 ```
 
 ## Updating HAI progress
