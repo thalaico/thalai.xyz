@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<title>ZenTest isolation probe</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; margin: 24px; background: #fff; color: #111; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  #verdict { font-size: 22px; font-weight: 700; margin: 12px 0 16px; padding: 10px 14px; border-radius: 6px; background: #eee; }
+  #verdict.ok { background: #d9f7e6; color: #0b5e33; }
+  #verdict.bad { background: #fde2e2; color: #8a1212; }
+  table { border-collapse: collapse; font: 14px/1.4 ui-monospace, monospace; }
+  td { padding: 4px 12px 4px 0; border-bottom: 1px solid #ddd; }
+  .BLOCKED { color: #0b5e33; font-weight: 700; }
+  .REACHABLE { color: #b00; font-weight: 700; }
+</style>
+</head>
+<body>
+<h1>ZenTest isolation probe</h1>
+<p>This page tries to reach addresses a test browser must never reach.</p>
+<div id="verdict">Probing…</div>
+<table id="results"></table>
+<script>
+// Plain http:// only: a TLS failure would look like a refusal.
+// Each probe: a no-cors fetch. A reachable HTTP service resolves (opaque
+// response); a refused/filtered connection rejects. Timeout = blocked too.
+const host = location.hostname;
+const targets = [
+  ['ZenTest app (loopback)', 'http://127.0.0.1:3000/health'],
+  ['Caddy admin (loopback)', 'http://127.0.0.1:2019/config/'],
+  ['Loopback :80', 'http://127.0.0.1/'],
+  ['Loopback :443', 'http://127.0.0.1:443/'],
+  ['localhost name', 'http://localhost:3000/health'],
+  ['IPv6 loopback', 'http://[::1]:3000/health'],
+  ['Cloud metadata', 'http://169.254.169.254/latest/meta-data/'],
+  ['Vultr metadata v1', 'http://169.254.169.254/v1.json'],
+  ['Private 10/8', 'http://10.0.0.1/'],
+  ['Private 172.16/12', 'http://172.16.0.1/'],
+  ['Private 192.168/16', 'http://192.168.1.1/'],
+  ['Server public IP :80', 'http://192.248.154.71/'],
+  ['Server public IP :443', 'http://192.248.154.71:443/'],
+  ['Local file', 'file:///etc/passwd'],
+];
+const row = (name, url, verdict, note) => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${name}</td><td>${url}</td><td class="${verdict}">${verdict}</td><td>${note}</td>`;
+  document.getElementById('results').appendChild(tr);
+};
+async function probe(name, url) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 4000);
+  const t0 = performance.now();
+  try {
+    const res = await fetch(url, { mode: 'no-cors', signal: ctl.signal, cache: 'no-store' });
+    // file:// returning anything at all, or any HTTP answer = reachable.
+    let note = `answered (${res.type}${res.status ? ' ' + res.status : ''})`;
+    if (url.startsWith('file:')) { const txt = await res.text().catch(() => ''); note += txt.includes('root:') ? ' — /etc/passwd contents!' : ` — ${txt.length} bytes`; }
+    return [name, url, 'REACHABLE', note];
+  } catch (e) {
+    const ms = Math.round(performance.now() - t0);
+    return [name, url, 'BLOCKED', ctl.signal.aborted ? `timed out ${ms} ms` : `refused ${ms} ms`];
+  } finally { clearTimeout(t); }
+}
+// Start after load so a slow probe never holds up page navigation.
+const run = async () => {
+  const results = await Promise.all(targets.map(([n, u]) => probe(n, u)));
+  for (const r of results) row(...r);
+  const bad = results.filter((r) => r[2] === 'REACHABLE');
+  const v = document.getElementById('verdict');
+  v.className = bad.length ? 'bad' : 'ok';
+  v.textContent = bad.length ? `FAIL: ${bad.length} of ${results.length} internal targets reachable` : `PASS: all ${results.length} internal targets blocked`;
+  document.title = v.textContent;
+};
+if (document.readyState === 'complete') setTimeout(run, 50);
+else addEventListener('load', () => setTimeout(run, 50));
+</script>
+</body>
+</html>
